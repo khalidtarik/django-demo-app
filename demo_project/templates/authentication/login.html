@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Demo App{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card">
+        <div class="card-body p-4">
+            <h3 class="text-center mb-4">Login</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.username }}
+                <div class="mb-3"></div>
+                {{ form.password }}
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <p class="text-muted">Don't have an account?</p>
+                <a href="{% url 'signup' %}" class="text-decoration-none">Create Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Demo App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-4 mb-4">Welcome to Demo App!</h1>
+                    <p class="lead">
+                        You have successfully logged in with your sydney.edu.pl email address.
+                    </p>
+                    <hr class="my-4">
+                    <p>
+                        <strong>Email:</strong> {{ user.email }}<br>
+                        <strong>Username:</strong> {{ user.username }}<br>
+                        <strong>Verified:</strong> 
+                        {% if user.is_verified %}
+                            <span class="badge bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge bg-danger">No</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
