@@ -7,9 +7,18 @@ from pathlib import Path
 from decouple import config
 # Import os module for operating system interface
 import os
-
+import dj_database_url
+import environ
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+POSTGRES_LOCALLY = os.getenv('POSTGRES_LOCALLY', 'False').lower() == 'true'
+
+
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()  # reads the .env file if it exists
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY is used for cryptographic signing (sessions, cookies, etc.)
@@ -19,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -46,7 +55,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
 ]
+
 
 ROOT_URLCONF = 'demo_project.urls'
 
@@ -69,13 +80,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'demo_project.wsgi.application'
 
-# Database
+# DATABASE: prefer DATABASE_URL (Railway), else local sqlite fallback
+env = environ.Env()
+environ.Env.read_env() 
+
+# existing code...
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# If DATABASE_URL is present, override default database
+if env('DATABASE_URL', default=None):
+    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -102,6 +122,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 
@@ -134,3 +156,4 @@ AUTH_USER_MODEL = 'authentication.User'
 
 # Company domain restriction
 ALLOWED_EMAIL_DOMAIN = 'sydney.edu.pl'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
